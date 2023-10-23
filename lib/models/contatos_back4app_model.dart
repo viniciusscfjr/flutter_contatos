@@ -21,16 +21,16 @@ class ContatosBack4AppModel {
 
 class Contato {
   String objectId = "";
-  String nome = "";
+  String name = "";
   String path = "";
   String createdAt = "";
   String updatedAt = "";
 
-  Contato(this.objectId, this.nome, this.path, this.createdAt, this.updatedAt);
+  Contato(this.objectId, this.name, this.path, this.createdAt, this.updatedAt);
 
   Contato.fromJson(Map<String, dynamic> json) {
     objectId = json['objectId'];
-    nome = json['nome'];
+    name = json['name'];
     path = json['path'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -39,7 +39,7 @@ class Contato {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['objectId'] = objectId;
-    data['nome'] = nome;
+    data['name'] = name;
     data['path'] = path;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;

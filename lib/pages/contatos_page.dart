@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/contatos_back4app_model.dart';
 import '../repositories/back4app/contatos_back4app_repository.dart';
 
 class ContactListPage extends StatefulWidget {
@@ -28,11 +27,11 @@ class _ContactListPageState extends State<ContactListPage> {
     }
   }
 
-  var futureContatosData = Future.value(ContatosBack4AppModel([]));
+  // var futureContatosData = Future.value(ContatosBack4AppModel([]));
   ContatosBack4AppRepository contatosBack4AppRepository =
       ContatosBack4AppRepository();
 
-  List<Contact> contacts = [];
+  List<Contact> _contacts = [];
 
   ImageProvider loadImageOrFallback(String imagePath) {
     if (imagePath.isNotEmpty) {
@@ -85,8 +84,10 @@ class _ContactListPageState extends State<ContactListPage> {
                     await contatosBack4AppRepository.criar(
                         contact.name, contact.imagePath);
 
+                    await _carregarContatos();
+
                     setState(() {
-                      contacts.add(contact);
+                      // contacts.add(contact);
                       _imageFile = null;
                     });
 
@@ -103,10 +104,29 @@ class _ContactListPageState extends State<ContactListPage> {
     );
   }
 
+  Future<void> _carregarContatos() async {
+    final contatosBanco = await contatosBack4AppRepository.listar();
+
+    if (contatosBanco.contatos.isNotEmpty) {
+      List<Contact> parseContatos = [];
+
+      for (var c in contatosBanco.contatos) {
+        parseContatos.add(Contact(
+          name: c.name,
+          imagePath: c.path,
+        ));
+      }
+
+      setState(() {
+        _contacts = parseContatos;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    futureContatosData = contatosBack4AppRepository.listar();
+    _carregarContatos();
   }
 
   @override
@@ -123,9 +143,9 @@ class _ContactListPageState extends State<ContactListPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(8),
-        itemCount: contacts.length,
+        itemCount: _contacts.length,
         itemBuilder: (context, index) {
-          final contact = contacts[index];
+          final contact = _contacts[index];
           return ListTile(
             title: Text(contact.name),
             titleAlignment: ListTileTitleAlignment.bottom,
